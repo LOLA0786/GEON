@@ -1,19 +1,20 @@
 import os
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 
 
 # Load environment variables
 load_dotenv()
 
-api_key = os.getenv("OPENAI_API_KEY")
-os.environ["OPENAI_API_KEY"] = api_key
-# Initialize OpenAI Chat model
-openai_model = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.2)
+api_key = os.getenv("GEMINI_API_KEY")
+os.environ["GEMINI_API_KEY"] = api_key
+# Initialize Gemini Pro model
+gemini_model = ChatGoogleGenerativeAI(api_key=api_key,model="gemini-1.5-flash", temperature=0.2)
 
 # Function to parse data using Gemini
-def parse_with_openai(dom_chunks, parse_description):
-    parsed_results = []
+def parse_with_gemini(dom_chunks):
+    parsed_results = {}
 
     template = (
         f"You are tasked with analyzing the following web page content for Generative Engine Optimization (GEO): {dom_chunks}.\n"
@@ -36,8 +37,13 @@ def parse_with_openai(dom_chunks, parse_description):
         f"...\n"
     )
 
-    # Send request to OpenAI model
-    response = openai_model.invoke(template)
-    parsed_results.append(response.content)
+    # Send request to Gemini model
+    try:
+        response = gemini_model.invoke(template)
+        lines = response.content.split('\n')
+        for idx, line in enumerate(lines, 1):
+            parsed_results[str(idx)] = line
+    except Exception as e:
+        parsed_results["error"] = f"Error occurred: {e}"
 
     return parsed_results
