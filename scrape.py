@@ -18,7 +18,6 @@ def scrape_website(website):
         time.sleep(10)  # Ensure the page fully loads
 
         return driver.page_source  # Return HTML content
-
     finally:
         driver.quit()
 
@@ -43,3 +42,28 @@ def clean_body_content(body_content):
 
 def split_dom_content(dom_content , max_length=6000):
     return [dom_content[i:i+max_length] for i in range(0,len(dom_content) , max_length)]
+
+def extract_dom_structure(element, max_depth=3, current_depth=0):
+    if current_depth > max_depth:
+        return None
+
+    structure = {
+        "tag": element.name,
+        "attributes": dict(element.attrs),
+        "children": [],
+        "text": element.get_text(strip=True)[:100]  # truncate for brevity
+    }
+
+    for child in element.find_all(recursive=False):
+        if child.name is not None:
+            child_struct = extract_dom_structure(child, max_depth, current_depth + 1)
+            if child_struct:
+                structure["children"].append(child_struct)
+
+    return structure
+
+def structure_of_data(html_content):
+    soup = BeautifulSoup(html_content, "html.parser")
+    body = soup.body
+    dom_structure = extract_dom_structure(body)
+    return dom_structure
