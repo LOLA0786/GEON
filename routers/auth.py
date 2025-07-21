@@ -39,7 +39,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-# --- Helpers ---
+
 def get_password_hash(password):
     return pwd_context.hash(password)
 
@@ -61,7 +61,7 @@ def authenticate_user(email: str, password: str):
     user_data["id"] = str(user_data["_id"])
     return User(**user_data)
 
-# --- Routes ---
+
 @router.post("/signup")
 def signup(request: SignupRequest):
     if users_collection.find_one({"email": request.email}):

@@ -2,48 +2,84 @@ import os
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
-
+import json
+import re
 
 # Load environment variables
 load_dotenv()
 
 api_key = os.getenv("GEMINI_API_KEY")
-os.environ["GEMINI_API_KEY"] = api_key
-# Initialize Gemini Pro model
 gemini_model = ChatGoogleGenerativeAI(api_key=api_key,model="gemini-1.5-flash", temperature=0.2)
 
-# Function to parse data using Gemini
-def parse_with_gemini(dom_chunks):
-    parsed_results = {}
-
+def parse_with_gemini(dom_chunks, html_structure):
     template = (
-        f"You are tasked with analyzing the following web page content for Generative Engine Optimization (GEO): {dom_chunks}.\n"
-        f"Please follow these instructions carefully:\n\n"
-        f"1. **GEO Score:** Evaluate the content and provide a GEO score out of 100 based on how well the content is optimized for AI-generated search engines (such as ChatGPT, Perplexity, and Google SGE).\n"
-        f"2. **Improvement Suggestions:** Provide specific, actionable GEO-focused suggestions to improve visibility and summarizability by generative AI systems.\n"
-        f"3. **Focus Areas:** Pay special attention to the following factors:\n"
-        f"   - Use of semantic HTML and structured content (headings, lists, tables, etc.)\n"
-        f"   - Presence of schema markup (JSON-LD) such as Article, FAQPage, Product, etc.\n"
-        f"   - Factual, clear, and verifiable information with external references\n"
-        f"   - Natural language Q&A formatting\n"
-        f"   - Authoritative tone, brand credibility, and updated content\n"
-        f"   - Internal linking, page discoverability, and mobile responsiveness\n"
-        f"4. **No Extra Content:** Do not include any additional text or explanation beyond the score and suggestions.\n"
-        f"5. **Format:** Respond strictly in the following format:\n"
-        f"GEO Score: <score>/100\n"
-        f"Suggestions:\n"
-        f"- <suggestion 1>\n"
-        f"- <suggestion 2>\n"
-        f"...\n"
-    )
+    f"You are tasked with analyzing the following website data for Generative Engine Optimization (GEO). "
+    f"The input includes both the raw content text and the HTML structural layout of the webpage.\n\n"
+    
+    f"raw_text_content: {dom_chunks}\n"
+    f"html_structure: {html_structure}\n\n"
+    
+    f"### Evaluation Instructions\n"
+    f"Please analyze the content and structure using the following criteria.\n\n"
 
-    # Send request to Gemini model
+    f"#### Content GEO Factors (AI Readability):\n"
+    f"- Relevance to a specific topic or question\n"
+    f"- Clear, factual, and well-structured language\n"
+    f"- Depth and semantic richness of the content\n"
+    f"- Use of AI-friendly formats (e.g., lists, FAQs, bullet points)\n"
+    f"- Natural keyword usage and topic coverage\n"
+    f"- Unique or valuable insights beyond generic content\n"
+    f"- Helpful, Q&A, or instructional tone\n"
+    f"- Readability and clarity for large language models (LLMs)\n\n"
+
+    f"#### Structure GEO Factors (HTML Optimization):\n"
+    f"- Proper use of semantic headings (H1–H6)\n"
+    f"- Use of schema markup (FAQ, Product, Review, etc.)\n"
+    f"- Correct metadata (title, description, Open Graph, etc.)\n"
+    f"- Accessibility support (alt text, ARIA labels)\n"
+    f"- Logical layout and separation of sections\n"
+    f"- Use of semantic tags (article, section, nav, etc.)\n"
+    f"- Structured and parsable layout for AI segmentation\n"
+
+    f"\nReturn your evaluation strictly in the following JSON key-value format:\n\n"
+
+    f"""{{
+  "content_geo_evaluation": {{
+    "geo_score": <score_out_of_100>,
+    "strengths": ["<strength 1>", "<strength 2>", "..."],
+    "improvements": ["<improvement 1>", "<improvement 2>", "..."],
+    "notes": "Optional comments about the content GEO performance"
+  }},
+  "structure_geo_evaluation": {{
+    "geo_score": <score_out_of_100>,
+    "strengths": ["<strength 1>", "<strength 2>", "..."],
+    "improvements": ["<improvement 1>", "<improvement 2>", "..."],
+    "notes": "Optional comments about the structure GEO performance"
+  }}
+}}"""
+    f"\n\nOnly return the structured JSON object above. Do not include any other text."
+)
+
+
     try:
         response = gemini_model.invoke(template)
-        lines = response.content.split('\n')
-        for idx, line in enumerate(lines, 1):
-            parsed_results[str(idx)] = line
+        raw_output = response.content.strip()
+
+        # Remove markdown ```json ... ``` wrapping if present
+        if raw_output.startswith("```json"):
+            raw_output = re.sub(r"^```json\s*|\s*```$", "", raw_output, flags=re.DOTALL)
+
+        parsed_results = json.loads(raw_output)
+
+    except json.JSONDecodeError as e:
+        parsed_results = {
+            "error": f"JSON decode error: {e}",
+            "raw_output": response.content
+        }
     except Exception as e:
-        parsed_results["error"] = f"Error occurred: {e}"
+        parsed_results = {
+            "error": f"Unexpected error: {e}",
+            "raw_output": str(response.content) if 'response' in locals() else ""
+        }
 
     return parsed_results

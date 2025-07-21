@@ -4,6 +4,6 @@ from typing import Optional
 class User(BaseModel):
     email: EmailStr
     hashed_password: str
-    account_type: str  # 'free', 'pro', or 'pro_plus'
+    account_type: str 
     full_name: Optional[str] = None
     disabled: Optional[bool] = False
