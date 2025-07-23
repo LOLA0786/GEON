@@ -8,6 +8,9 @@ from pymongo import MongoClient
 import os
 from models import User
 
+from dotenv import load_dotenv
+load_dotenv()
+
 router = APIRouter()
 MONGO_URI = os.getenv("MONGO_URI")
 mongo_client = MongoClient(MONGO_URI)
