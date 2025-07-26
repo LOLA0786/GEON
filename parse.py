@@ -9,6 +9,7 @@ import re
 load_dotenv()
 
 api_key = os.getenv("GEMINI_API_KEY")
+print(api_key)
 gemini_model = ChatGoogleGenerativeAI(api_key=api_key,model="gemini-1.5-flash", temperature=0.2)
 
 def parse_with_gemini(dom_chunks, html_structure):
@@ -145,6 +146,94 @@ def get_score(dom_chunks, html_structure):
 
         if raw_output.startswith("json"):
             raw_output = re.sub(r"^json\s*|\s*```$", "", raw_output, flags=re.DOTALL)
+
+        parsed_scores = json.loads(raw_output)
+
+        # Compute final weighted GEO score
+        final_score = 0
+        for key, weight in WEIGHTS.items():
+            if key in parsed_scores:
+                final_score += parsed_scores[key] * weight
+            else:
+                raise ValueError(f"Missing score: {key}")
+
+        return {
+            "individual_scores": parsed_scores,
+            "final_geo_score": round(final_score, 2)
+        }
+
+    except json.JSONDecodeError as e:
+        return {
+            "error": f"JSON decode error: {e}",
+            "raw_output": response.content
+        }
+    except Exception as e:
+        return {
+            "error": f"Unexpected error: {e}",
+            "raw_output": str(response.content) if 'response' in locals() else ""
+        }
+
+def get_score(dom_chunks, html_structure):
+    WEIGHTS = {
+        'content_quality': 0.20,
+        'structure_score': 0.15,
+        'entity_linking_score': 0.15,
+        'prompt_visibility': 0.15,
+        'response_alignment': 0.10,
+        'ai_readable_format': 0.15,
+        'freshness_score': 0.10
+    }
+
+    template = f"""
+        You are evaluating a web page's AI visibility and Generative Engine Optimization (GEO).
+        Please assess the content based on the following 7 criteria and return scores for each on a scale of 0 to 100.
+
+        Input data:
+        -------------
+        raw_text_content:
+        \"\"\"
+        {dom_chunks}
+        \"\"\"
+
+        html_structure:
+        \"\"\"
+        {html_structure}
+        \"\"\"
+
+        Evaluation Criteria (with weights):
+        -----------------------------------
+        1. **content_quality** (20%) – How informative, relevant, and well-written is the content?
+        2. **structure_score** (15%) – How well is the HTML structured with headings, hierarchy, and sections?
+        3. **entity_linking_score** (15%) – Are there proper mentions and hyperlinks to recognized entities (people, products, organizations)?
+        4. **prompt_visibility** (15%) – How well does the content answer typical user prompts or queries?
+        5. **response_alignment** (10%) – Does the content align with how LLMs are expected to generate responses?
+        6. **ai_readable_format** (15%) – Is the content easily readable by AI (minimal ads, proper formatting, semantic HTML)?
+        7. **freshness_score** (10%) – Is the content recent and regularly updated?
+
+        Response format:
+        ----------------
+        Only return a valid JSON object (no commentary or extra text), like:
+
+        {{
+          "content_quality": 85,
+          "structure_score": 70,
+          "entity_linking_score": 60,
+          "prompt_visibility": 75,
+          "response_alignment": 80,
+          "ai_readable_format": 72,
+          "freshness_score": 68
+        }}
+
+        Ensure your response is strict JSON.
+        """
+
+
+    try:
+        response = gemini_model.invoke(template)
+        raw_output = response.content.strip()
+
+        if raw_output.startswith("```json"):
+            raw_output = re.sub(r"^```json\s*|\s*```$", "", raw_output, flags=re.DOTALL)
 
         parsed_scores = json.loads(raw_output)
 

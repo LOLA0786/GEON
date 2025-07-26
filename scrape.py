@@ -5,12 +5,39 @@ from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-def scrape_website(website):
-    print("Launching chrome browser")   
+# def scrape_website(website):
+#     print("Launching chrome browser")   
 
-    service = Service(ChromeDriverManager().install())
-    options = webdriver.ChromeOptions()
-    driver = webdriver.Chrome(service=service, options=options)
+#     service = Service(ChromeDriverManager().install())
+#     options = webdriver.ChromeOptions()
+#     driver = webdriver.Chrome(service=service, options=options)
+
+#     try:
+#         driver.get(website)
+#         print("Page loaded....")
+#         time.sleep(10)  # Ensure the page fully loads
+
+#         return driver.page_source  # Return HTML content
+#     finally:
+#         driver.quit()
+
+import time
+import undetected_chromedriver as uc
+
+def scrape_website(website):
+    print("Launching undetected Chrome browser")
+
+    options = uc.ChromeOptions()
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    # options.add_argument("--headless")  # Uncomment if you want to run headless
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-dev-shm-usage")
+
+    driver = uc.Chrome(
+        # version_main=136, 
+        options=options)
 
     try:
         driver.get(website)
@@ -20,6 +47,7 @@ def scrape_website(website):
         return driver.page_source  # Return HTML content
     finally:
         driver.quit()
+
 
 def extract_body_content(html_content):
     soup = BeautifulSoup(html_content , "html.parser")
