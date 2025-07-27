@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from scrape import scrape_website, extract_body_content, clean_body_content, split_dom_content , structure_of_data
 from parse import parse_with_gemini, get_score
-from presence import check_brand_visibility_with_gemini
+# from presence import check_brand_visibility_with_gemini
 from models import User
 from routers.auth import authenticate_user
 from fastapi.security import OAuth2PasswordBearer
@@ -74,11 +74,11 @@ def parse_content(request: ParseRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/brand-visibility")
-def check_brand_visibility(request: BrandVisibilityRequest):
-    try:
-        result = check_brand_visibility_with_gemini(request.brand_name)
-        return {"visibility_result": result}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# @router.post("/brand-visibility")
+# def check_brand_visibility(request: BrandVisibilityRequest):
+#     try:
+#         result = check_brand_visibility_with_gemini(request.brand_name)
+#         return {"visibility_result": result}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
     

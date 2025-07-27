@@ -3,24 +3,6 @@ from selenium.webdriver.chrome.service import Service
 import time
 from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
-
-
-# def scrape_website(website):
-#     print("Launching chrome browser")   
-
-#     service = Service(ChromeDriverManager().install())
-#     options = webdriver.ChromeOptions()
-#     driver = webdriver.Chrome(service=service, options=options)
-
-#     try:
-#         driver.get(website)
-#         print("Page loaded....")
-#         time.sleep(10)  # Ensure the page fully loads
-
-#         return driver.page_source  # Return HTML content
-#     finally:
-#         driver.quit()
-
 import time
 import undetected_chromedriver as uc
 
