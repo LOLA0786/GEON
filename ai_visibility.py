@@ -7,7 +7,7 @@ SEARCH_ENGINE_ID = "8641817a4af17475c"
 EXCLUDE_DOMAINS = [
     "youtube.com", "google.com", "support.google.com", "accounts.google.com",
     "maps.google.com", "webcache.googleusercontent.com", "policies.google.com",
-    "facebook.com"
+    "facebook.com", "apps.apple.com"
 ]
 
 def extract_domain(url):
@@ -74,8 +74,9 @@ def get_brand_web_mentions_and_texts(brand_name):
     return results
 
 if __name__ == "__main__":
-    brand = "Veefin"
-    data = get_brand_web_mentions_and_texts(brand)
+    brand = "BrowserStack"
+    get_top_10_unique_domain_urls(brand)
+    # data = get_brand_web_mentions_and_texts(brand)
 
-    for idx, item in enumerate(data, 1):
-        print(f"\n[{idx}] 🔗 {item['url']}\n--- Content Preview ---\n{item['content']}\n")
+    # for idx, item in enumerate(data, 1):
+    #     print(f"\n[{idx}] 🔗 {item['url']}\n--- Content Preview ---\n{item['content']}\n")
