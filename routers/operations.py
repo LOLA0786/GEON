@@ -9,13 +9,12 @@ from fastapi.security import OAuth2PasswordBearer
 from middleware import get_current_user
 
 router = APIRouter(
-    #dependencies=[Depends(get_current_user)]  # 👈 this protects all endpoints
+    # dependencies=[Depends(get_current_user)]  # 👈 this protects all endpoints
 )
 dom_storage = {}
 
 class ScrapeRequest(BaseModel):
     url: str
-
 class ParseRequest(BaseModel):
     session_id: str
 
