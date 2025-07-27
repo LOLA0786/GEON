@@ -18,7 +18,7 @@ def scrape_website(website):
     options.add_argument("--disable-dev-shm-usage")
 
     driver = uc.Chrome(
-        version_main=136, 
+        # version_main=136, 
         options=options)
 
     try:
