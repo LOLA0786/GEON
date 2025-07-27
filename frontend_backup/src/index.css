@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* GEOscore - AI-powered website optimization platform with futuristic design */
+
+@layer base {
+  :root {
+    /* Dark theme base colors */
+    --background: 0 0% 0%;
+    --foreground: 210 15% 95%;
+
+    --card: 220 18% 12%;
+    --card-foreground: 210 15% 95%;
+
+    --popover: 220 18% 12%;
+    --popover-foreground: 210 15% 95%;
+
+    /* Blue accent primary colors */
+    --primary: 217 91% 60%;
+    --primary-foreground: 220 20% 8%;
+    --primary-glow: 217 91% 70%;
+
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 210 15% 90%;
+
+    --muted: 220 15% 16%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 91% 60%;
+    --accent-foreground: 220 20% 8%;
+
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 210 15% 95%;
+
+    --border: 220 15% 25%;
+    --input: 220 15% 20%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar colors */
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 210 15% 90%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 220 20% 8%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 210 15% 90%;
+    --sidebar-border: 220 15% 25%;
+    --sidebar-ring: 217 91% 60%;
+
+    /* Futuristic AI-themed gradients and effects */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
+    --gradient-background: linear-gradient(135deg, hsl(220 20% 8%), hsl(220 22% 10%));
+    --gradient-neural: linear-gradient(45deg, hsl(217 91% 60% / 0.1), hsl(280 60% 50% / 0.1));
+    --shadow-glow: 0 0 30px hsl(217 91% 60% / 0.3);
+    --shadow-neural: 0 0 50px hsl(217 91% 60% / 0.2);
+    --shadow-subtle: 0 4px 20px hsl(220 20% 4% / 0.5);
+    
+    /* Animation variables */
+    --pulse-primary: hsl(217 91% 60% / 0.4);
+    --neural-flow: linear-gradient(90deg, transparent, hsl(217 91% 60% / 0.6), transparent);
+  }
+
+  .dark {
+    /* Keep the same dark theme values */
+    --background: 0 0% 0%;
+    --foreground: 210 15% 95%;
+    --card: 220 18% 12%;
+    --card-foreground: 210 15% 95%;
+    --popover: 220 18% 12%;
+    --popover-foreground: 210 15% 95%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 220 20% 8%;
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 210 15% 90%;
+    --muted: 220 15% 16%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 220 20% 8%;
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 210 15% 95%;
+    --border: 220 15% 25%;
+    --input: 220 15% 20%;
+    --ring: 217 91% 60%;
+    --sidebar-background: 220 22% 10%;
+    --sidebar-foreground: 210 15% 90%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 220 20% 8%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 210 15% 90%;
+    --sidebar-border: 220 15% 25%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    background: var(--gradient-background);
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.8);
+  }
+}
+
+@layer components {
+  .metric-card {
+    @apply bg-card border border-border rounded-lg p-6 shadow-lg;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .metric-card-header {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .metric-value {
+    @apply text-3xl font-bold text-foreground;
+  }
+
+  .metric-trend {
+    @apply text-sm font-medium flex items-center gap-1;
+  }
+
+  .metric-trend.positive {
+    @apply text-green-400;
+  }
+
+  .metric-trend.negative {
+    @apply text-red-400;
+  }
+
+  .chart-container {
+    @apply bg-card border border-border rounded-lg p-6;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .primary-button {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300;
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .primary-button:hover {
+    box-shadow: 0 6px 20px hsl(var(--primary) / 0.5);
+    transform: translateY(-1px);
+  }
+
+  .primary-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--neural-flow);
+    transition: left 0.5s ease;
+  }
+
+  .primary-button:hover::before {
+    left: 100%;
+  }
+
+  /* Neural network effects */
+  .neural-bg {
+    background: var(--gradient-neural);
+  }
+
+  .neural-glow {
+    box-shadow: var(--shadow-neural);
+  }
+
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Text gradient utilities */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+}
