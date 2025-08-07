@@ -18,7 +18,7 @@ def scrape_website(website):
     options.add_argument("--disable-dev-shm-usage")
 
     driver = uc.Chrome(
-        # version_main=136, 
+        version_main=136, 
         options=options)
 
     try:
@@ -29,7 +29,7 @@ def scrape_website(website):
         return driver.page_source  # Return HTML content
     finally:
         driver.quit()
-
+        print("done")
 
 def extract_body_content(html_content):
     soup = BeautifulSoup(html_content , "html.parser")
